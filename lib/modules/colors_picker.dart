@@ -146,10 +146,7 @@ class _BarColorPickerState extends State<BarColorPicker> {
       left = thumbRadius;
       top = (thumbRadius * 2 - barHeight) / 2;
     } else {
-      gradient = LinearGradient(
-          colors: colors,
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter);
+      gradient = LinearGradient(colors: colors, begin: Alignment.topCenter, end: Alignment.bottomCenter);
       left = (thumbRadius * 2 - barWidth) / 2;
       top = thumbRadius;
     }
@@ -197,8 +194,7 @@ class _BarColorPickerState extends State<BarColorPicker> {
         break;
       case PickMode.grey:
         final channel = (0xff * percent).toInt();
-        widget.colorListener(
-            Color.fromARGB(0xff, channel, channel, channel).value);
+        widget.colorListener(Color.fromARGB(0xff, channel, channel, channel).value);
         break;
     }
   }
@@ -245,7 +241,7 @@ class _CircleColorPickerState extends State<CircleColorPicker> {
     Color(0xff00ffff),
     Color(0xff0000ff),
     Color(0xffff00ff),
-    Color(0xffff0000)
+    Color(0xffff0000),
   ];
 
   late double thumbDistanceToCenter;
@@ -299,9 +295,7 @@ class _CircleColorPickerState extends State<CircleColorPicker> {
       onPanUpdate: (details) => handleTouch(details.globalPosition, context),
       child: Stack(
         children: [
-          SizedBox(
-              width: (radius + thumbRadius) * 2,
-              height: (radius + thumbRadius) * 2),
+          SizedBox(width: (radius + thumbRadius) * 2, height: (radius + thumbRadius) * 2),
           Positioned(
             left: thumbRadius,
             top: thumbRadius,

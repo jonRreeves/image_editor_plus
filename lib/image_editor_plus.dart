@@ -22,6 +22,7 @@ import 'package:image_editor_plus/layers/image_layer.dart';
 import 'package:image_editor_plus/layers/text_layer.dart';
 import 'package:image_editor_plus/modules/all_emojies.dart';
 import 'package:image_editor_plus/modules/text.dart';
+import 'package:image_editor_plus/modules/text_layer_overlay.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:screenshot/screenshot.dart';
 
@@ -323,6 +324,10 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
   final GlobalKey globalKey = GlobalKey();
   ScreenshotController screenshotController = ScreenshotController();
 
+  TextEditingController staticTextController = TextEditingController();
+
+  late TextLayerData staticTextLayer;
+
   @override
   void dispose() {
     layers.clear();
@@ -405,6 +410,13 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
       loadImage(widget.image!);
     }
 
+    staticTextLayer = TextLayerData(
+      background: Colors.white,
+      text: staticTextController.text,
+      color: Colors.black,
+      size: 64,
+    );
+
     super.initState();
   }
 
@@ -480,6 +492,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         if (layerItem is TextLayerData) {
           return TextLayer(
             layerData: layerItem,
+            controller: staticTextController,
             onUpdate: () {
               setState(() {});
             },
@@ -563,16 +576,12 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
           ),
         ),
         bottomNavigationBar: Container(
-          // color: Colors.black45,
           alignment: Alignment.bottomCenter,
           height: 86 + MediaQuery.of(context).padding.bottom,
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: const BoxDecoration(
             color: Colors.white,
             shape: BoxShape.rectangle,
-            //   boxShadow: [
-            //     BoxShadow(blurRadius: 1),
-            //   ],
           ),
           child: SafeArea(
             child: Row(
@@ -583,21 +592,30 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                     icon: Icons.text_fields,
                     text: 'Text',
                     onTap: () async {
-                      TextLayerData? layer = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const TextEditorImage(),
+                      if (!layers.contains(staticTextLayer)) {
+                        setState(() {
+                          layers.add(staticTextLayer);
+                        });
+                      }
+                      showModalBottomSheet(
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(10),
+                            topLeft: Radius.circular(10),
+                          ),
                         ),
+                        context: context,
+                        builder: (context) {
+                          return TextLayerOverlay(
+                            index: layers.indexOf(staticTextLayer),
+                            layer: staticTextLayer,
+                            controller: staticTextController,
+                            onUpdate: () {
+                              setState(() {});
+                            },
+                          );
+                        },
                       );
-
-                      if (layer == null) return;
-
-                      undoLayers.clear();
-                      removedLayers.clear();
-
-                      layers.add(layer);
-
-                      setState(() {});
                     },
                   ),
                 ),

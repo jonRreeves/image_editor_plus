@@ -7,11 +7,13 @@ import 'package:image_editor_plus/modules/text_layer_overlay.dart';
 class TextLayer extends StatefulWidget {
   final TextLayerData layerData;
   final VoidCallback? onUpdate;
+  final TextEditingController controller;
 
   const TextLayer({
     Key? key,
     required this.layerData,
     this.onUpdate,
+    required this.controller,
   }) : super(key: key);
   @override
   createState() => _TextViewState();
@@ -43,6 +45,7 @@ class _TextViewState extends State<TextLayer> {
               return TextLayerOverlay(
                 index: layers.indexOf(widget.layerData),
                 layer: widget.layerData,
+                controller: widget.controller,
                 onUpdate: () {
                   if (widget.onUpdate != null) widget.onUpdate!();
                   setState(() {});
@@ -58,8 +61,7 @@ class _TextViewState extends State<TextLayer> {
               widget.layerData.offset.dy + detail.focalPointDelta.dy,
             );
           } else if (detail.pointerCount == 2) {
-            widget.layerData.size =
-                initialSize + detail.scale * (detail.scale > 1 ? 1 : -1);
+            widget.layerData.size = initialSize + detail.scale * (detail.scale > 1 ? 1 : -1);
 
             // print('angle');
             // print(detail.rotation);
@@ -74,8 +76,7 @@ class _TextViewState extends State<TextLayer> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: widget.layerData.background
-                    .withAlpha(widget.layerData.backgroundOpacity.toInt()),
+                color: widget.layerData.background.withAlpha(widget.layerData.backgroundOpacity.toInt()),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
